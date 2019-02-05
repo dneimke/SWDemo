@@ -23,4 +23,9 @@
     <TypeScriptCompile Include="Scripts\index.ts" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <Folder Include="wwwroot\js\" />
+  </ItemGroup>
+
 </Project>

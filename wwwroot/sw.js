@@ -1,7 +1,7 @@
 ﻿"use strict";
 
 // SW Playground - https://serviceworke.rs/
-// https://madskristensen.net/blog/progressive-web-apps-made-easy-with-aspnet-core/
+// ASPNet Core solution - https://madskristensen.net/blog/progressive-web-apps-made-easy-with-aspnet-core/
 
 var version = 'v4:swdemo';
 self.addEventListener("install", function (event) {
