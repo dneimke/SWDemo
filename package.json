@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "rxjs": "^6.3.3"
+    "rivets": "^0.9.6",
+    "rxjs": "^6.3.3",
+    "tinybind": "^0.11.0"
   },
   "devDependencies": {
     "@types/bootstrap": "^4.1.3",

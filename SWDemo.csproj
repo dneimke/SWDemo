@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Scripts\FancyTool.ts" />
     <None Remove="Scripts\index.ts" />
+    <None Remove="Scripts\PlannerTool.ts" />
   </ItemGroup>
 
 
@@ -19,7 +19,7 @@
 
 
   <ItemGroup>
-    <TypeScriptCompile Include="Scripts\FancyTool.ts" />
+    <TypeScriptCompile Include="Scripts\PlannerTool.ts" />
     <TypeScriptCompile Include="Scripts\index.ts" />
   </ItemGroup>
 

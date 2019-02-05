@@ -1,0 +1,114 @@
+﻿@{
+    ViewData["Title"] = "Planner Tool";
+}
+
+<div class="container" id="planner-tool">
+    <h1 class="display-4">Planner Tool</h1>
+
+    <div class="container" id="create-new" rv-show="state.new">
+
+        <div class="alert alert-info" role="alert" style="padding: 12px;">
+            <div class="glyphicon glyphicon-exclamation-sign"></div>
+            <div>
+                <p>
+                    Use the planning tool to create a list of tasks and save them against a named plan.
+                </p>
+                <p>
+                    <button class="btn btn-success" id="create-plan">Create New Plan</button>
+                </p>
+            </div>
+        </div>
+
+        
+    </div>
+
+    <div class="container" id="edit-plan" rv-hide="state.new">
+
+        <p>Add tasks then click 'Save Plan' to create a new plan.</p>
+
+        <div class="row">
+            <h4>Task</h4>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-12">
+                <p>
+                    <input name="title" maxlength="150" rv-value="state.task" />
+                    <button class="btn btn-secondary" id="add-task" rv-on-click="state.addTask">Add</button>
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <button class="btn btn-primary" id="save-plan" rv-enabled="state.canSave">Save Plan</button>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-12">
+                <h4>
+                    <code><span rv-text="state.tasks | summary"></span></code>
+                </h4>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="save-dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Save Plan</h4>
+            </div>
+            <div class="modal-body">
+                <section rv-hide="state.isOnline">
+                    You are currently offline. Your plan will be saved locally and can be synchronized when you are next online.
+                </section>
+                <hr />
+
+                <ul id="blahList">
+                    <li rv-each-item="items">
+                        <span>{ item }</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="~/sw.js"></script>
+    <script src="~/js/tool.js"></script>
+
+    <script type="text/javascript">
+
+        if ('serviceWorker' in navigator) {
+            console.log('CLIENT: service worker registration in progress.');
+
+            navigator.serviceWorker.register('../sw.js', { scope: '/' }).then(function (reg) {
+                // console.log('CLIENT: service worker registration complete.');
+
+                if(reg.installing) {
+                  console.log('Service worker installing');
+                } else if(reg.waiting) {
+                  console.log('Service worker installed');
+                } else if(reg.active) {
+                  console.log('Service worker active');
+                }
+
+            }, function (error) {
+                console.log('CLIENT: Registration failed with ' + error);
+            });
+
+        } else {
+            console.log('CLIENT: service worker is not supported.');
+        }
+
+        document.addEventListener("DOMContentLoaded", function (event) {
+            var page = new lib.PlannerTool();
+            page.init();
+        });
+
+    </script>
+}

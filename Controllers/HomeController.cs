@@ -15,15 +15,13 @@ namespace SWDemo.Controllers
             return View();
         }
 
-        public IActionResult FancyTool()
+        public IActionResult Planner()
         {
             return View();
         }
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

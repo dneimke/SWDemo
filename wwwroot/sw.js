@@ -3,7 +3,7 @@
 // SW Playground - https://serviceworke.rs/
 // ASPNet Core solution - https://madskristensen.net/blog/progressive-web-apps-made-easy-with-aspnet-core/
 
-var version = 'v4:swdemo';
+var version = 'v5:swdemo';
 self.addEventListener("install", function (event) {
 
     console.log('WORKER: install event in progress.');
@@ -11,10 +11,13 @@ self.addEventListener("install", function (event) {
     event.waitUntil(
         caches.open(version).then(function (cache) {
             return cache.addAll([
-                '/Home/FancyTool',
+                '/Home/Planner',
                 '/html/fallback.html',
                 '/css/site.css',
                 '/lib/bootstrap/dist/css/bootstrap.css',
+                '/lib/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2',
+                '/lib/bootstrap/dist/js/bootstrap.js',
+                '/lib/jquery/dist/jquery.js',
                 '/js/tool.js'
             ]);
         })
