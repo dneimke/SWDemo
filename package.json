@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@types/knockout": "^3.4.63",
+    "knockout": "^3.4.2",
     "rivets": "^0.9.6",
     "rxjs": "^6.3.3",
     "tinybind": "^0.11.0"
