@@ -20,4 +20,4 @@ The key goal is to have tools run in either online or offline mode on iPad.  Acc
 
 The application has a Home page and a Planner page.  The Planner page hosts the tool.
 
-![Application Menu](/images/application-menu.jpg "Application Menu")
+![Application Menu](/blob/master/images/application-menu.jpg "Application Menu")
