@@ -3,9 +3,18 @@
 export class ApplicationDataAgent {
 
     _agent: DataAgent;
+    _onlineAgent = new OnlineAgent();
 
     constructor() {
-        this._agent = navigator.onLine ? new OnlineAgent() : new OfflineAgent();
+        this._agent = navigator.onLine ? this._onlineAgent : new OfflineAgent();
+
+        window.addEventListener('online', this.updateOnlineStatus.bind(this));
+        window.addEventListener('offline', this.updateOnlineStatus.bind(this));
+    }
+
+    private updateOnlineStatus(event: Event) {
+        console.info(`Switching to ${navigator.onLine}`)
+        this._agent = navigator.onLine ? this._onlineAgent : new OfflineAgent();
     }
 
     save(name: string, tasks: string[]): Promise<boolean> {

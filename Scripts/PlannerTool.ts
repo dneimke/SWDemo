@@ -1,5 +1,4 @@
 ﻿import { ApplicationDataAgent } from "./Data/data-agent";
-
 let ko = require('knockout') as KnockoutStatic;
 
 export class PlannerTool {
