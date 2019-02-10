@@ -3,19 +3,22 @@
 }
 
 <div class="container" id="planner-tool">
-    <h1 class="display-4">Planner Tool <span data-bind="if:hasOfflineData">(Has offline data)</span></h1>
+    <h1 class="display-4">Planner Tool</h1>
+
+    <div data-bind="if:hasOfflineData">
+        <div class="alert alert-danger" role="alert">
+            There is data saved locally that needs to be synchronized.
+        </div>
+    </div>
+    
 
     <div class="container" id="create-new" data-bind="visible:isNew">
         <div class="alert alert-info" role="alert" style="padding: 12px;">
-            <div class="glyphicon glyphicon-exclamation-sign"></div>
-            <div>
-                <p>
-                    Use the planning tool to create a list of tasks and save them against a named plan.
-                </p>
-                <p>
-                    <button class="btn btn-success" id="create-plan">Create New Plan</button>
-                </p>
-            </div>
+            <p>
+                <span class="glyphicon glyphicon-exclamation-sign"></span>
+                Use the planning tool to create a list of tasks and save them against a named plan.
+                <button class="btn btn-success pull-right" id="create-plan">Create New Plan</button>
+            </p>
         </div>
     </div>
 
