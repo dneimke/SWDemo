@@ -17,7 +17,7 @@
             <p>
                 <span class="glyphicon glyphicon-exclamation-sign"></span>
                 Use the planning tool to create a list of tasks and save them against a named plan.
-                <button class="btn btn-success pull-right" id="create-plan">Create New Plan</button>
+                <button class="btn btn-success pull-right" data-bind="click: create" id="create-plan">Create New Plan</button>
             </p>
         </div>
     </div>
@@ -38,7 +38,7 @@
             </div>
         </div>
         <div class="row">
-            <button class="btn btn-primary" id="save-plan" data-bind="enable: canSave()">Save Plan</button>
+            <button class="btn btn-primary" id="save-plan" data-bind="enable: canSave(), click: save">Save Plan</button>
         </div>
         <hr />
         <div class="row">

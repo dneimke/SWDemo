@@ -4,43 +4,13 @@ let ko = require('knockout') as KnockoutStatic;
 export class PlannerTool {
 
     private _plannerContainer: HTMLElement;
-    private _createButton: HTMLButtonElement;
-    private _saveButton: HTMLButtonElement;
-    private _state: ToolState;
-    private _agent: ApplicationDataAgent = new ApplicationDataAgent();
-
-    private _dialog: CompletePlanDialog;
 
     constructor() {
         this._plannerContainer = document.getElementById('planner-tool');
-        this._createButton = document.getElementById('create-plan') as HTMLButtonElement;
-        this._saveButton = document.getElementById('save-plan') as HTMLButtonElement;
-        this._state = new ToolState();
-        this._dialog = new CompletePlanDialog();
     }
 
     init() {
-
-        ko.applyBindings(this._state, this._plannerContainer);
-
-        let that = this;
-        this._createButton.addEventListener('click', function (e: Event) {
-            that._state.isNew(false);
-        });
-
-
-        this._saveButton.addEventListener('click', async function (e: Event) {
-
-            let tasks = that._state.tasks() as string[];
-            let result = await that._dialog.show(tasks);
-
-            if (result.result === true) {
-                that._agent.save(result.name, tasks);
-                that._state.reset();
-            }
-
-            that._dialog.hide();
-        });
+        ko.applyBindings(new ToolState(), this._plannerContainer);
     }
 }
 
@@ -48,11 +18,12 @@ export class PlannerTool {
 class ToolState {
     isNew = ko.observable(true);
     task = ko.observable('');
-    tasks = ko.observableArray();
+    tasks = ko.observableArray<string>();
     canSave = ko.observable(false);
     hasOfflineData = ko.observable(false);
 
-    private _agent: ApplicationDataAgent = new ApplicationDataAgent();
+    private _dialog = new CompletePlanDialog();
+    private _agent = new ApplicationDataAgent();
 
     constructor() {
         this._agent.hasOfflineData().then(result => {
@@ -81,6 +52,23 @@ class ToolState {
 
         const canSave = this.tasks().length > 0;
         this.canSave(canSave);
+    }
+
+    create(e: Event) {
+        this.isNew(false);
+    }
+    
+    async save (e: Event) {
+
+        let tasks = this.tasks();
+        let result = await this._dialog.show(tasks);
+
+        if (result.result === true) {
+            this._agent.save(result.name, tasks);
+            this.reset();
+        }
+
+        this._dialog.hide();
     }
 }
 
