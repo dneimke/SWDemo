@@ -13,6 +13,8 @@ The application uses the following to achieve its results:
 * [LocalStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage) [ [CanIUse](https://caniuse.com/#search=localStorage) ] - Used to store data locally when the user is offline
 * [Online and offline events](https://developer.mozilla.org/en-US/docs/Web/API/NavigatorOnLine/Online_and_offline_events) [ [CanIUse](https://caniuse.com/#search=online) ] - Used to detect when the user's online state changes
 * [ServiceWorker](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorker) [ [CanIUse](https://caniuse.com/#search=ServiceWorkers) ] - Used to cache resources for use offline
+* [Rxjs](https://github.com/ReactiveX/rxjs) - TODO: Implement Rxjs to expose observables for things such as online/offline state changed and localStorage state
+* [Custom events](https://javascript.info/dispatch-events) - TODO: Implement custom dispatch events on the state to pass data to the tool and beyond more effectiently
 
 The key goal is to have tools run in either online or offline mode on iPad.  According to CanIUse, all key HTML5 technologies are supported by Safari 10 and above.
 
