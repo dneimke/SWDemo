@@ -30,7 +30,7 @@
             <div class="form-group col-md-12">
                 <p>
                     <input name="title" maxlength="150" data-bind="value: task" />
-                    <button class="btn btn-secondary" id="add-task" rv-on-click="state.addTask">Add</button>
+                    <button class="btn btn-secondary" id="add-task" data-bind="click: addTask">Add</button>
                 </p>
             </div>
         </div>
@@ -40,9 +40,9 @@
         <hr />
         <div class="row">
             <div class="col-md-12">
-                <h4>
-                    <code><span data-bind="enable: tasks"></span></code>
-                </h4>
+                <ul data-bind="foreach: { data: tasks, as: 'task' }">
+                    <li data-bind="text: task"> </li>
+                </ul>
             </div>
 
         </div>
@@ -52,22 +52,24 @@
 
 <div class="modal fade" tabindex="-1" role="dialog" id="save-dialog">
     <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
+        <div class="modal-content" id="dialog-content">
             <div class="modal-header">
-                <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close pull-right" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">Save Plan</h4>
             </div>
             <div class="modal-body">
-                <section rv-hide="state.isOnline">
+                <section data-bind="visible:isOffline">
                     You are currently offline. Your plan will be saved locally and can be synchronized when you are next online.
                 </section>
                 <hr />
 
-                <ul id="blahList">
-                    <li rv-each-item="items">
-                        <span>{ item }</span>
-                    </li>
+                <ul id="preview-list" data-bind="foreach: { data: tasks, as: 'task' }">
+                    <li data-bind="text: task"> </li>
                 </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="save-button">Save</button>
             </div>
         </div>
     </div>
