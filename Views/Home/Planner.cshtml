@@ -3,7 +3,7 @@
 }
 
 <div class="container" id="planner-tool">
-    <h1 class="display-4">Planner Tool</h1>
+    <h1 class="display-4">Planner Tool <span data-bind="if:hasOfflineData">(Has offline data)</span></h1>
 
     <div class="container" id="create-new" data-bind="visible:isNew">
         <div class="alert alert-info" role="alert" style="padding: 12px;">

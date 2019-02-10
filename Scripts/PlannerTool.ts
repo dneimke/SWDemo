@@ -1,4 +1,6 @@
-﻿let ko = require('knockout') as KnockoutStatic;
+﻿import { ApplicationDataAgent } from "./Data/data-agent";
+
+let ko = require('knockout') as KnockoutStatic;
 
 export class PlannerTool {
 
@@ -6,6 +8,7 @@ export class PlannerTool {
     private _createButton: HTMLButtonElement;
     private _saveButton: HTMLButtonElement;
     private _state: ToolState;
+    private _agent: ApplicationDataAgent = new ApplicationDataAgent();
 
     private _dialog: CompletePlanDialog;
 
@@ -17,7 +20,7 @@ export class PlannerTool {
         this._dialog = new CompletePlanDialog();
     }
 
-     init() {
+    init() {
 
         ko.applyBindings(this._state, this._plannerContainer);
 
@@ -26,17 +29,18 @@ export class PlannerTool {
             that._state.isNew(false);
         });
 
-         this._saveButton.addEventListener('click', async function (e: Event) {
+
+        this._saveButton.addEventListener('click', async function (e: Event) {
 
             let tasks = that._state.tasks() as string[];
             let result = await that._dialog.show(tasks);
 
             if (result.result === true) {
+                that._agent.save(result.name, tasks);
                 that._state.reset();
             }
 
-             that._dialog.hide();
-          
+            that._dialog.hide();
         });
     }
 }
@@ -47,6 +51,15 @@ class ToolState {
     task = ko.observable('');
     tasks = ko.observableArray();
     canSave = ko.observable(false);
+    hasOfflineData = ko.observable(false);
+
+    private _agent: ApplicationDataAgent = new ApplicationDataAgent();
+
+    constructor() {
+        this._agent.hasOfflineData().then(result => {
+            this.hasOfflineData(result);
+        });
+    }
 
     isOnline() {
         return navigator.onLine;
@@ -57,6 +70,9 @@ class ToolState {
         this.task('');
         this.tasks.removeAll();
         this.canSave(false);
+        this._agent.hasOfflineData().then(result => {
+            this.hasOfflineData(result);
+        });
     }
 
     addTask(): void {
@@ -64,9 +80,9 @@ class ToolState {
         this.tasks.push(t);
         this.task('');
 
-        const canSave = this.tasks().length > 0
+        const canSave = this.tasks().length > 0;
         this.canSave(canSave);
-    }    
+    }
 }
 
 
@@ -78,6 +94,11 @@ class DialogState {
         this.tasks.removeAll();
         tasks.forEach(t => this.tasks.push(t));
     }
+}
+
+export interface CompletePlanDialogResult {
+    name: string;
+    result: boolean;
 }
 
 
@@ -103,12 +124,12 @@ class CompletePlanDialog {
         this._saveButton = document.getElementById(this._saveSelector) as HTMLButtonElement;
         ko.applyBindings(this._dialogState, this._dialogContentContainer);
 
-        $(this._dialogElement).on('hidden.bs.modal', function (e) {            
-            that._dfd.resolve({ result: false });
+        $(this._dialogElement).on('hidden.bs.modal', function (e) {
+            that._dfd.resolve({ name: '', result: false });
         });
 
         this._saveButton.addEventListener("click", (e) => {
-            that._dfd.resolve({ result: true });
+            that._dfd.resolve({ name: new Date().getMilliseconds().toString(), result: true });
         });
     }
 
@@ -124,6 +145,3 @@ class CompletePlanDialog {
     }
 }
 
-export interface CompletePlanDialogResult {
-    result: boolean;
-}
