@@ -13,7 +13,6 @@ export class ApplicationDataAgent {
     }
 
     private updateOnlineStatus(event: Event) {
-        console.info(`Switching to ${navigator.onLine}`)
         this._agent = navigator.onLine ? this._onlineAgent : new OfflineAgent();
     }
 
