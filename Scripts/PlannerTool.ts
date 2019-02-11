@@ -1,50 +1,48 @@
 ﻿import { ApplicationDataAgent } from "./Data/data-agent";
 let ko = require('knockout') as KnockoutStatic;
 
-export class PlannerTool {
 
-    private _plannerContainer: HTMLElement;
+
+export class PlanningTool {
+
+    private _planningToolContainer: HTMLElement;
 
     constructor() {
-        this._plannerContainer = document.getElementById('planner-tool');
+        this._planningToolContainer = document.getElementById('planning-tool');
     }
 
     init() {
-        ko.applyBindings(new ToolState(), this._plannerContainer);
+        ko.applyBindings(new PlanningToolState(), this._planningToolContainer);
     }
 }
 
 
-class ToolState {
+
+// Separate class to maintain the state of the main Planning Tool UI.
+// Down the track, the Planning Tool could host multiple bound UI 'components' which each hold their own state
+class PlanningToolState {
+
+    // State
     isNew = ko.observable(true);
     task = ko.observable('');
     tasks = ko.observableArray<string>();
     canSave = ko.observable(false);
     hasOfflineData = ko.observable(false);
 
-    private _dialog = new CompletePlanDialog();
-    private _agent = new ApplicationDataAgent();
+    isOnline = () => navigator.onLine;
 
-    constructor() {
-        this._agent.hasOfflineData().then(result => {
+    constructor(private _agent = new ApplicationDataAgent(), private _dialog = new CompletePlanDialog()) {
+        _agent.hasOfflineData().then(result => {
             this.hasOfflineData(result);
         });
     }
 
-    isOnline() {
-        return navigator.onLine;
+    // initializes the create plan user interface
+    create(e: Event) {
+        this.isNew(false);
     }
-
-    reset() {
-        this.isNew(true);
-        this.task('');
-        this.tasks.removeAll();
-        this.canSave(false);
-        this._agent.hasOfflineData().then(result => {
-            this.hasOfflineData(result);
-        });
-    }
-
+    
+    // adds a new task to the current plan
     addTask(): void {
         const t = this.task();
         this.tasks.push(t);
@@ -54,10 +52,7 @@ class ToolState {
         this.canSave(canSave);
     }
 
-    create(e: Event) {
-        this.isNew(false);
-    }
-    
+    // launches a dialog and allows the user to save and complete the current plan
     async save (e: Event) {
 
         let tasks = this.tasks();
@@ -67,68 +62,67 @@ class ToolState {
             this._agent.save(result.name, tasks);
             this.reset();
         }
+    }
 
-        this._dialog.hide();
+    private reset() {
+        this.isNew(true);
+        this.task('');
+        this.tasks.removeAll();
+        this.canSave(false);
+        this._agent.hasOfflineData().then(result => {
+            this.hasOfflineData(result);
+        });
     }
 }
 
 
-class DialogState {
+class CompletePlanDialog {
+
+    // State
     isOffline = ko.observable(false);
     tasks = ko.observableArray();
+    name = ko.observable('');
 
-    changeTasks(tasks: string[]) {
+    private _dfd: JQueryDeferred<CompletePlanDialogResult>;
+    private _dialogElement: HTMLElement;
+
+    constructor() {
+        this._dialogElement = document.getElementById('save-dialog');
+        $(this._dialogElement).on('hidden.bs.modal', this.onHidden.bind(this));
+
+        let dialogContentContainer = document.getElementById('dialog-content');
+        ko.applyBindings(this, dialogContentContainer);
+    }
+
+    // Callable from external code to display the dialog
+    show(tasks: string[]): JQueryPromise<CompletePlanDialogResult> {
+        this._dfd = $.Deferred<CompletePlanDialogResult>();
+
+        this.onChangeTasks(tasks); // HACK so that the bound UL displays correctly on re-binding
+        this.name(new Date().getMilliseconds().toString()); // TEMP: remove when bound to UI input element
+
+        $(this._dialogElement).modal('show');
+        return this._dfd.promise();
+    }
+
+    // bound to Save button
+    save(e: Event) {
+        this._dfd.resolve({ name: this.name(), result: true });
+        $(this._dialogElement).modal('hide');
+    }
+
+    private onHidden() {
+        this._dfd.resolve({ name: '', result: false });
+    }
+
+    private onChangeTasks(tasks: string[]) {
         this.tasks.removeAll();
         tasks.forEach(t => this.tasks.push(t));
     }
 }
 
+
 export interface CompletePlanDialogResult {
     name: string;
     result: boolean;
 }
-
-
-
-class CompletePlanDialog {
-
-    private _dfd: JQueryDeferred<CompletePlanDialogResult>;
-
-    private _dialogSelector = 'save-dialog';
-    private _contentSelector = 'dialog-content';
-    private _saveSelector = 'save-button';
-
-    private _saveButton: HTMLButtonElement;
-    private _dialogElement: HTMLElement;
-    private _dialogContentContainer: HTMLElement;
-    private _dialogState: DialogState = new DialogState();
-
-    constructor() {
-        let that = this;
-
-        this._dialogElement = document.getElementById(this._dialogSelector);
-        this._dialogContentContainer = document.getElementById(this._contentSelector);
-        this._saveButton = document.getElementById(this._saveSelector) as HTMLButtonElement;
-        ko.applyBindings(this._dialogState, this._dialogContentContainer);
-
-        $(this._dialogElement).on('hidden.bs.modal', function (e) {
-            that._dfd.resolve({ name: '', result: false });
-        });
-
-        this._saveButton.addEventListener("click", (e) => {
-            that._dfd.resolve({ name: new Date().getMilliseconds().toString(), result: true });
-        });
-    }
-
-    show(tasks: string[]): JQueryPromise<CompletePlanDialogResult> {
-        this._dfd = $.Deferred<CompletePlanDialogResult>();
-        this._dialogState.changeTasks(tasks);
-        $(this._dialogElement).modal('show');
-        return this._dfd.promise();
-    }
-
-    hide(): void {
-        $(this._dialogElement).modal('hide');
-    }
-}
-

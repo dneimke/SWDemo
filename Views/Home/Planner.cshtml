@@ -2,8 +2,8 @@
     ViewData["Title"] = "Planner Tool";
 }
 
-<div class="container" id="planner-tool">
-    <h1 class="display-4">Planner Tool</h1>
+<div class="container" id="planning-tool">
+    <h1 class="display-4">Planning Tool</h1>
 
     <div data-bind="if:hasOfflineData">
         <div class="alert alert-danger" role="alert">
@@ -72,7 +72,7 @@
                 </ul>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-primary" id="save-button">Save</button>
+                <button class="btn btn-primary" data-bind="click: save" id="save-button">Save</button>
             </div>
         </div>
     </div>
@@ -108,7 +108,7 @@
         }
 
         document.addEventListener("DOMContentLoaded", function (event) {
-            var page = new lib.PlannerTool();
+            var page = new lib.PlanningTool();
             page.init();
         });
 
